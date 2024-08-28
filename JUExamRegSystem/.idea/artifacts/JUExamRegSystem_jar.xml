@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="JUExamRegSystem:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/JUExamRegSystem_jar</output-path>
+    <root id="archive" name="JUExamRegSystem.jar">
+      <element id="module-output" name="JUExamRegSystem" />
+    </root>
+  </artifact>
+</component>
