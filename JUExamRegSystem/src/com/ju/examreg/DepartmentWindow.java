@@ -11,11 +11,11 @@ public class DepartmentWindow extends JFrame {
         setTitle("Department Login/Registration");
         setSize(400, 300);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocationRelativeTo(null); // Center window on the screen
-        setLayout(null); // Use null layout for absolute positioning
+        setLocationRelativeTo(null);
+        setLayout(null);
 
         // Background image
-        JLabel background = new JLabel(new ImageIcon("E:\\slide3.jpg")); // Adjust path as necessary
+        JLabel background = new JLabel(new ImageIcon("E:\\slide3.jpg"));
         background.setBounds(0, 0, getWidth(), getHeight());
         add(background);
 
