@@ -5,6 +5,7 @@ import storage.Student;
 import validation.InputValidator;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -12,6 +13,8 @@ public class ExamRegistrationForm {
     private JFrame frame;
     private JTextField nameField, rollField, hallField, studentIdField, departmentField, batchField;
     private JButton submitButton, resetButton, viewButton;
+    private JRadioButton maleButton, femaleButton; // Added radio buttons for gender
+    private ButtonGroup genderGroup; // Group for radio buttons
 
     public static void main(String[] args) {
         ExamRegistrationForm form = new ExamRegistrationForm();
@@ -20,7 +23,7 @@ public class ExamRegistrationForm {
 
     public void createForm() {
         frame = new JFrame("Exam Registration Form");
-        frame.setSize(500, 500);
+        frame.setSize(500, 600); // Increased size to accommodate gender selection
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(null);
 
@@ -32,17 +35,20 @@ public class ExamRegistrationForm {
         departmentField = createTextField("Department:", 190);
         batchField = createTextField("Batch:", 230);
 
+        // Create gender selection
+        createGenderSelection();
+
         // Create buttons
         submitButton = new JButton("Submit");
-        submitButton.setBounds(125, 270, 100, 30);
+        submitButton.setBounds(125, 370, 100, 30);
         frame.add(submitButton);
 
         resetButton = new JButton("Reset");
-        resetButton.setBounds(235, 270, 100, 30);
+        resetButton.setBounds(235, 370, 100, 30);
         frame.add(resetButton);
 
         viewButton = new JButton("View Registrations");
-        viewButton.setBounds(125, 310, 210, 30);
+        viewButton.setBounds(125, 410, 210, 30);
         frame.add(viewButton);
 
         // Add button actions
@@ -64,6 +70,24 @@ public class ExamRegistrationForm {
         return jTextField;
     }
 
+    private void createGenderSelection() {
+        JLabel genderLabel = new JLabel("Gender:");
+        genderLabel.setBounds(30, 270, 90, 25);
+        frame.add(genderLabel);
+
+        maleButton = new JRadioButton("Male");
+        maleButton.setBounds(120, 270, 70, 25);
+        femaleButton = new JRadioButton("Female");
+        femaleButton.setBounds(200, 270, 80, 25);
+
+        genderGroup = new ButtonGroup();
+        genderGroup.add(maleButton);
+        genderGroup.add(femaleButton);
+
+        frame.add(maleButton);
+        frame.add(femaleButton);
+    }
+
     // Submit action handler
     private class SubmitAction implements ActionListener {
         @Override
@@ -74,6 +98,7 @@ public class ExamRegistrationForm {
             String studentId = studentIdField.getText();
             String department = departmentField.getText();
             String batch = batchField.getText();
+            String gender = maleButton.isSelected() ? "Male" : "Female"; // Get selected gender
 
             // Validate input
             if (!InputValidator.validateFields(name, rollNo, hallName, studentId, department, batch)) {
@@ -82,7 +107,7 @@ public class ExamRegistrationForm {
             }
 
             // Save data
-            Student student = new Student(name, rollNo, hallName, studentId, department, batch);
+            Student student = new Student(name, rollNo, hallName, studentId, department, batch, gender);
             DataStorage.saveStudent(student);
             JOptionPane.showMessageDialog(frame, "Registration Successful!");
 
@@ -101,6 +126,7 @@ public class ExamRegistrationForm {
             studentIdField.setText("");
             departmentField.setText("");
             batchField.setText("");
+            genderGroup.clearSelection(); // Reset gender selection
         }
     }
 
