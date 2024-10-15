@@ -10,12 +10,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class ExamRegistrationForm {
-    private JFrame frame;
-    private JTextField nameField, rollField, hallField, studentIdField, departmentField, batchField;
-    private JTextField dayField, monthField, yearField; // Added fields for DOB
-    private JButton submitButton, resetButton, viewButton;
-    private JRadioButton maleButton, femaleButton;
-    private ButtonGroup genderGroup;
+    public JFrame frame;
+    public JTextField nameField, rollField, hallField, studentIdField, departmentField, batchField;
+    public JTextField dayField, monthField, yearField; // Added fields for DOB
+    public JButton submitButton, resetButton, viewButton;
+    public JRadioButton maleButton, femaleButton;
+    public ButtonGroup genderGroup;
 
     public static void main(String[] args) {
         ExamRegistrationForm form = new ExamRegistrationForm();
@@ -23,18 +23,18 @@ public class ExamRegistrationForm {
     }
 
     public void createForm() {
-        frame = new JFrame("Exam Registration Form");
-        frame.setSize(500, 650); // Increased size to accommodate DOB fields
+        frame = new JFrame(" Exam Registration Form ");
+        frame.setSize(700, 800); // Increased size to accommodate DOB fields
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(null);
 
         // Create form fields
-        nameField = createTextField("Name:", 30);
-        rollField = createTextField("Roll No:", 70);
-        hallField = createTextField("Hall Name:", 110);
-        studentIdField = createTextField("Student ID:", 150);
-        departmentField = createTextField("Department:", 190);
-        batchField = createTextField("Batch:", 230);
+        nameField = createTextField("Name:", 40);
+        rollField = createTextField("Roll No:", 80);
+        hallField = createTextField("Hall Name:", 120);
+        studentIdField = createTextField("Student ID:", 160);
+        departmentField = createTextField("Department:", 200);
+        batchField = createTextField("Batch:", 240);
 
         // Create gender selection
         createGenderSelection();
@@ -52,7 +52,7 @@ public class ExamRegistrationForm {
         frame.add(resetButton);
 
         viewButton = new JButton("View Registrations");
-        viewButton.setBounds(125, 490, 210, 30);
+        viewButton.setBounds(142, 490, 180, 30);
         frame.add(viewButton);
 
         // Add button actions
