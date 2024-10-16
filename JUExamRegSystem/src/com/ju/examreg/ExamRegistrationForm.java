@@ -11,7 +11,7 @@ import java.awt.event.ActionListener;
 
 public class ExamRegistrationForm {
     public JFrame frame;
-    public JTextField nameField, rollField, hallField, studentIdField, departmentField, batchField;
+    public JTextField nameField, rollField, hallField, studentIdField, departmentField, batchField,mobileField;
     public JTextField dayField, monthField, yearField; // Added fields for DOB
     public JButton submitButton, resetButton, viewButton;
     public JRadioButton maleButton, femaleButton;
@@ -24,7 +24,7 @@ public class ExamRegistrationForm {
 
     public void createForm() {
         frame = new JFrame(" Exam Registration Form ");
-        frame.setSize(700, 800); // Increased size to accommodate DOB fields
+        frame.setSize(500, 650); // Increased size to accommodate DOB fields
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(null);
 
@@ -35,6 +35,7 @@ public class ExamRegistrationForm {
         studentIdField = createTextField("Student ID:", 160);
         departmentField = createTextField("Department:", 200);
         batchField = createTextField("Batch:", 240);
+        mobileField = createTextField("Mobile No: ", 350);
 
         // Create gender selection
         createGenderSelection();
@@ -121,6 +122,7 @@ public class ExamRegistrationForm {
             String department = departmentField.getText();
             String batch = batchField.getText();
             String gender = maleButton.isSelected() ? "Male" : "Female";
+            String mobile = mobileField.getText();
 
             int day, month, year;
             try {
@@ -164,15 +166,32 @@ public class ExamRegistrationForm {
             dayField.setText("");
             monthField.setText("");
             yearField.setText("");
+            mobileField.setText("");
         }
     }
 
+    // View registrations handler
     // View registrations handler
     private class ViewAction implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
             String registrations = DataStorage.viewRegistrations();
-            JOptionPane.showMessageDialog(frame, registrations, "Registered Students", JOptionPane.INFORMATION_MESSAGE);
+
+            // Create a JTextArea to display the registrations
+            JTextArea textArea = new JTextArea(registrations);
+            textArea.setEditable(false); // Make the text area read-only
+            textArea.setLineWrap(true);
+            textArea.setWrapStyleWord(true);
+
+            // Create a JScrollPane to make the JTextArea scrollable
+            JScrollPane scrollPane = new JScrollPane(textArea);
+            scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+            scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+            scrollPane.setPreferredSize(new java.awt.Dimension(550, 300)); // Set preferred size
+
+            // Display the scroll pane in a JOptionPane
+            JOptionPane.showMessageDialog(frame, scrollPane, "Registered Students", JOptionPane.INFORMATION_MESSAGE);
         }
     }
+
 }
