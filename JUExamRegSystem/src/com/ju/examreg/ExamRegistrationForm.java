@@ -2,20 +2,18 @@ package form;
 
 import storage.DataStorage;
 import storage.Student;
-import dob.DateOfBirth;
 import validation.InputValidator;
+import dob.DateOfBirth;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class ExamRegistrationForm {
-    public JFrame frame;
-    public JTextField nameField, rollField, hallField, studentIdField, departmentField, batchField,mobileField;
-    public JTextField dayField, monthField, yearField; // Added fields for DOB
-    public JButton submitButton, resetButton, viewButton;
-    public JRadioButton maleButton, femaleButton;
-    public ButtonGroup genderGroup;
+    private JFrame frame;
+    private JTextField nameField, rollField, hallField, studentIdField, departmentField, batchField, mobileField;
+    private JTextField dayField, monthField, yearField;
+    private JButton submitButton, resetButton, viewButton;
 
     public static void main(String[] args) {
         ExamRegistrationForm form = new ExamRegistrationForm();
@@ -23,37 +21,48 @@ public class ExamRegistrationForm {
     }
 
     public void createForm() {
-        frame = new JFrame(" Exam Registration Form ");
-        frame.setSize(500, 650); // Increased size to accommodate DOB fields
+        frame = new JFrame("Exam Registration Form");
+        frame.setSize(600, 600);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(null);
 
         // Create form fields
-        nameField = createTextField("Name:", 40);
-        rollField = createTextField("Roll No:", 80);
-        hallField = createTextField("Hall Name:", 120);
-        studentIdField = createTextField("Student ID:", 160);
-        departmentField = createTextField("Department:", 200);
-        batchField = createTextField("Batch:", 240);
-        mobileField = createTextField("Mobile No: ", 350);
+        nameField = createTextField("Name:", 30);
+        rollField = createTextField("Roll No:", 70);
+        hallField = createTextField("Hall Name:", 110);
+        studentIdField = createTextField("Student ID:", 150);
+        departmentField = createTextField("Department:", 190);
+        batchField = createTextField("Batch:", 230);
+        mobileField = createTextField("Mobile No:", 270);
 
-        // Create gender selection
-        createGenderSelection();
+        // Date of Birth fields
+        JLabel dobLabel = new JLabel("Date of Birth:");
+        dobLabel.setBounds(30, 310, 90, 25);
+        frame.add(dobLabel);
 
-        // Create date of birth fields
-        createDateOfBirthFields();
+        dayField = new JTextField();
+        dayField.setBounds(120, 310, 50, 25);
+        frame.add(dayField);
+
+        monthField = new JTextField();
+        monthField.setBounds(180, 310, 50, 25);
+        frame.add(monthField);
+
+        yearField = new JTextField();
+        yearField.setBounds(240, 310, 70, 25);
+        frame.add(yearField);
 
         // Create buttons
         submitButton = new JButton("Submit");
-        submitButton.setBounds(125, 450, 100, 30);
+        submitButton.setBounds(125, 370, 100, 30);
         frame.add(submitButton);
 
         resetButton = new JButton("Reset");
-        resetButton.setBounds(235, 450, 100, 30);
+        resetButton.setBounds(235, 370, 100, 30);
         frame.add(resetButton);
 
         viewButton = new JButton("View Registrations");
-        viewButton.setBounds(142, 490, 180, 30);
+        viewButton.setBounds(143, 410, 170, 30);
         frame.add(viewButton);
 
         // Add button actions
@@ -75,42 +84,6 @@ public class ExamRegistrationForm {
         return jTextField;
     }
 
-    private void createGenderSelection() {
-        JLabel genderLabel = new JLabel("Gender:");
-        genderLabel.setBounds(30, 270, 90, 25);
-        frame.add(genderLabel);
-
-        maleButton = new JRadioButton("Male");
-        maleButton.setBounds(120, 270, 70, 25);
-        femaleButton = new JRadioButton("Female");
-        femaleButton.setBounds(200, 270, 80, 25);
-
-        genderGroup = new ButtonGroup();
-        genderGroup.add(maleButton);
-        genderGroup.add(femaleButton);
-
-        frame.add(maleButton);
-        frame.add(femaleButton);
-    }
-
-    private void createDateOfBirthFields() {
-        JLabel dobLabel = new JLabel("Date of Birth:");
-        dobLabel.setBounds(30, 310, 90, 25);
-        frame.add(dobLabel);
-
-        dayField = new JTextField();
-        dayField.setBounds(120, 310, 40, 25);
-        frame.add(dayField);
-
-        monthField = new JTextField();
-        monthField.setBounds(170, 310, 40, 25);
-        frame.add(monthField);
-
-        yearField = new JTextField();
-        yearField.setBounds(220, 310, 60, 25);
-        frame.add(yearField);
-    }
-
     // Submit action handler
     private class SubmitAction implements ActionListener {
         @Override
@@ -121,8 +94,7 @@ public class ExamRegistrationForm {
             String studentId = studentIdField.getText();
             String department = departmentField.getText();
             String batch = batchField.getText();
-            String gender = maleButton.isSelected() ? "Male" : "Female";
-            String mobile = mobileField.getText();
+            String mobileNumber = mobileField.getText();
 
             int day, month, year;
             try {
@@ -137,13 +109,13 @@ public class ExamRegistrationForm {
             DateOfBirth dob = new DateOfBirth(day, month, year);
 
             // Validate input
-            if (!InputValidator.validateFields(name, rollNo, hallName, studentId, department, batch)) {
+            if (!InputValidator.validateFields(name, rollNo, hallName, studentId, department, batch, mobileNumber)) {
                 JOptionPane.showMessageDialog(frame, "Please fill in all fields correctly.", "Validation Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
             // Save data
-            Student student = new Student(name, rollNo, hallName, studentId, department, batch, gender, dob);
+            Student student = new Student(name, rollNo, hallName, studentId, department, batch, mobileNumber, dob);
             DataStorage.saveStudent(student);
             JOptionPane.showMessageDialog(frame, "Registration Successful!");
 
@@ -162,36 +134,29 @@ public class ExamRegistrationForm {
             studentIdField.setText("");
             departmentField.setText("");
             batchField.setText("");
-            genderGroup.clearSelection();
+            mobileField.setText("");
             dayField.setText("");
             monthField.setText("");
             yearField.setText("");
-            mobileField.setText("");
         }
     }
 
-    // View registrations handler
     // View registrations handler
     private class ViewAction implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
             String registrations = DataStorage.viewRegistrations();
-
-            // Create a JTextArea to display the registrations
             JTextArea textArea = new JTextArea(registrations);
-            textArea.setEditable(false); // Make the text area read-only
+            textArea.setEditable(false);
             textArea.setLineWrap(true);
             textArea.setWrapStyleWord(true);
 
-            // Create a JScrollPane to make the JTextArea scrollable
             JScrollPane scrollPane = new JScrollPane(textArea);
             scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
             scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-            scrollPane.setPreferredSize(new java.awt.Dimension(550, 300)); // Set preferred size
+            scrollPane.setPreferredSize(new java.awt.Dimension(400, 300));
 
-            // Display the scroll pane in a JOptionPane
             JOptionPane.showMessageDialog(frame, scrollPane, "Registered Students", JOptionPane.INFORMATION_MESSAGE);
         }
     }
-
 }
