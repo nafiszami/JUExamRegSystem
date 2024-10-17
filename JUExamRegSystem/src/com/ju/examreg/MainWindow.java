@@ -7,7 +7,6 @@ import java.awt.event.ActionListener;
 
 public class MainWindow extends JFrame {
     public MainWindow() {
-
         setTitle("Exam Registration System");
         setSize(800, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -16,15 +15,14 @@ public class MainWindow extends JFrame {
         // Set layout
         setLayout(new BorderLayout());
 
-
         JLabel background = new JLabel(new ImageIcon("E:\\slide3.jpg"));
         background.setLayout(new GridBagLayout());
         getContentPane().add(background);
 
-
         JButton studentButton = createStyledButton("Student");
         JButton departmentButton = createStyledButton("Department");
         JButton hallButton = createStyledButton("Hall");
+        JButton registrarButton = createStyledButton("Registrar"); // Registrar button
         JButton examControlButton = createStyledButton("Exam Control Office");
 
         studentButton.addActionListener(new ActionListener() {
@@ -48,6 +46,13 @@ public class MainWindow extends JFrame {
             }
         });
 
+        registrarButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                new RegistrarWindow().setVisible(true); // Redirect to the Registrar window
+                dispose();
+            }
+        });
+
         examControlButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 new ExamControlOfficeWindow().setVisible(true);
@@ -64,20 +69,17 @@ public class MainWindow extends JFrame {
         background.add(studentButton, gbc);
         background.add(departmentButton, gbc);
         background.add(hallButton, gbc);
+        background.add(registrarButton, gbc); // Place Registrar button before Exam Control Office
         background.add(examControlButton, gbc);
     }
 
-
     private JButton createStyledButton(String text) {
         JButton button = new JButton(text);
-
-
         button.setFont(new Font("Arial", Font.BOLD, 16));
         button.setBackground(new Color(70, 130, 180));
         button.setForeground(Color.WHITE);
         button.setFocusPainted(false);
         button.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
-
 
         button.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
