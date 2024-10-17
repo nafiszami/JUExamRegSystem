@@ -100,9 +100,8 @@ public class StudentWindow extends JFrame {
 
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
-                // Successful login, open student dashboard
-                String studentId = rs.getString("student_id"); // Retrieve student ID from the result set
-                new StudentDashboard(studentId).setVisible(true);
+                int studentId = rs.getInt("student_id"); // Retrieve student ID
+                new StudentDashboard(studentId).setVisible(true); // Pass student ID to dashboard
                 dispose(); // Close the login window
             } else {
                 JOptionPane.showMessageDialog(this, "Invalid email or password.");
