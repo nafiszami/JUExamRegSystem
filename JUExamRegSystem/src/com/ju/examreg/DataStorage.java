@@ -1,27 +1,41 @@
-
-
 package storage;
 
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class DataStorage {
-    private static List<Student> studentList = new ArrayList<>();
+    private static final String FILE_NAME = "registered_students.txt";
 
     public static void saveStudent(Student student) {
-        studentList.add(student);
+        try (FileWriter fw = new FileWriter(FILE_NAME, true);
+             BufferedWriter bw = new BufferedWriter(fw);
+             PrintWriter out = new PrintWriter(bw)) {
+            out.println(student.toString());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public static String viewRegistrations() {
-        if (studentList.isEmpty()) {
+        StringBuilder registrations = new StringBuilder();
+        try (BufferedReader br = new BufferedReader(new FileReader(FILE_NAME))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                registrations.append(line).append("\n");
+            }
+        } catch (IOException e) {
             return "No registrations found.";
         }
 
-        StringBuilder registrations = new StringBuilder();
-        for (Student student : studentList) {
-            registrations.append(student.toString()).append("\n");
+        return registrations.length() > 0 ? registrations.toString() : "No registrations found.";
+    }
+
+    public static void resetFile() {
+        try (PrintWriter writer = new PrintWriter(new FileWriter(FILE_NAME))) {
+            writer.print(""); // Clear the contents of the file
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        return registrations.toString();
     }
 }
-
