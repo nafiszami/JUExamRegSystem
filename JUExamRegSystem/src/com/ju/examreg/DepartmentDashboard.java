@@ -29,7 +29,7 @@ public class DepartmentDashboard extends JFrame {
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
-        // Panel for buttons
+
         JPanel buttonPanel = new JPanel();
         buttonPanel.add(new JLabel("Select Exam:"));
         buttonPanel.add(examComboBox);
@@ -39,17 +39,17 @@ public class DepartmentDashboard extends JFrame {
         add(buttonPanel, BorderLayout.NORTH);
         add(studentScrollPane, BorderLayout.CENTER);
 
-        // Load exams for this department into the combo box
+
         loadExams();
 
-        // Action listeners
+
         viewStudentsButton.addActionListener(e -> loadStudents());
         logoutButton.addActionListener(e -> {
             new DepartmentWindow().setVisible(true);
             dispose();
         });
 
-        // Add mouse listener for double-click on student list
+
         studentList.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent evt) {
@@ -59,7 +59,7 @@ public class DepartmentDashboard extends JFrame {
             }
         });
 
-        // Set custom renderer to highlight selected student in blue
+      
         studentList.setCellRenderer(new DefaultListCellRenderer() {
             @Override
             public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
