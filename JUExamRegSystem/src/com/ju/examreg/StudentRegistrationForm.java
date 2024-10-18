@@ -35,7 +35,7 @@ public class StudentRegistrationForm extends JFrame {
     private JTextField nameField = new JTextField();
     private JTextField fatherNameField = new JTextField();
     private JTextField motherNameField = new JTextField();
-    private JTextField dobField = new JTextField(); // Format: YYYY-MM-DD
+    private JTextField dobField = new JTextField();
     private JTextField addressField = new JTextField();
     private JTextField sscYearField = new JTextField();
     private JTextField sscGPAField = new JTextField();
@@ -51,10 +51,10 @@ public class StudentRegistrationForm extends JFrame {
 
     public StudentRegistrationForm() {
         setTitle("Student Registration");
-        setSize(400, 700); // Increased size to accommodate all fields
+        setSize(400, 700);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
-        setLayout(new GridLayout(35, 2)); // Updated to accommodate all fields
+        setLayout(new GridLayout(35, 2));
         Font titleFont = new Font("Arial", Font.BOLD, 18);
         titleLabel.setFont(titleFont);
         titleLabel.setForeground(Color.BLUE);
@@ -105,7 +105,7 @@ public class StudentRegistrationForm extends JFrame {
             }
         });
 
-        // Add the register button at the end
+
         add(registerButton);
     }
 
@@ -117,37 +117,37 @@ public class StudentRegistrationForm extends JFrame {
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-            // Validate and set values from form fields
+
             try {
-                pstmt.setInt(1, Integer.parseInt(studentIdField.getText())); // student_id
+                pstmt.setInt(1, Integer.parseInt(studentIdField.getText()));
             } catch (NumberFormatException e) {
                 JOptionPane.showMessageDialog(this, "Invalid Student ID. Please enter a numeric value.");
                 studentIdField.requestFocus();
                 return;
             }
 
-            pstmt.setString(2, nameField.getText()); // student_name
+            pstmt.setString(2, nameField.getText());
             if (nameField.getText().isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Full Name is required.");
                 nameField.requestFocus();
                 return;
             }
 
-            pstmt.setString(3, fatherNameField.getText()); // father_name
+            pstmt.setString(3, fatherNameField.getText());
             if (fatherNameField.getText().isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Father's Name is required.");
                 fatherNameField.requestFocus();
                 return;
             }
 
-            pstmt.setString(4, motherNameField.getText()); // mother_name
+            pstmt.setString(4, motherNameField.getText());
             if (motherNameField.getText().isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Mother's Name is required.");
                 motherNameField.requestFocus();
                 return;
             }
 
-            pstmt.setString(5, dobField.getText()); // date_of_birth
+            pstmt.setString(5, dobField.getText());
             if (dobField.getText().isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Date of Birth is required.");
                 dobField.requestFocus();
@@ -162,7 +162,7 @@ public class StudentRegistrationForm extends JFrame {
             }
 
             try {
-                pstmt.setInt(7, Integer.parseInt(sscYearField.getText())); // ssc_year
+                pstmt.setInt(7, Integer.parseInt(sscYearField.getText()));
             } catch (NumberFormatException e) {
                 JOptionPane.showMessageDialog(this, "Invalid SSC Year. Please enter a numeric value.");
                 sscYearField.requestFocus();
@@ -170,7 +170,7 @@ public class StudentRegistrationForm extends JFrame {
             }
 
             try {
-                pstmt.setBigDecimal(8, new java.math.BigDecimal(sscGPAField.getText())); // ssc_gpa
+                pstmt.setBigDecimal(8, new java.math.BigDecimal(sscGPAField.getText()));
             } catch (NumberFormatException e) {
                 JOptionPane.showMessageDialog(this, "Invalid SSC GPA. Please enter a valid decimal value.");
                 sscGPAField.requestFocus();
@@ -178,7 +178,7 @@ public class StudentRegistrationForm extends JFrame {
             }
 
             try {
-                pstmt.setInt(9, Integer.parseInt(hscYearField.getText())); // hsc_year
+                pstmt.setInt(9, Integer.parseInt(hscYearField.getText()));
             } catch (NumberFormatException e) {
                 JOptionPane.showMessageDialog(this, "Invalid HSC Year. Please enter a numeric value.");
                 hscYearField.requestFocus();
@@ -186,7 +186,7 @@ public class StudentRegistrationForm extends JFrame {
             }
 
             try {
-                pstmt.setBigDecimal(10, new java.math.BigDecimal(hscGPAField.getText())); // hsc_gpa
+                pstmt.setBigDecimal(10, new java.math.BigDecimal(hscGPAField.getText()));
             } catch (NumberFormatException e) {
                 JOptionPane.showMessageDialog(this, "Invalid HSC GPA. Please enter a valid decimal value.");
                 hscGPAField.requestFocus();
@@ -237,7 +237,7 @@ public class StudentRegistrationForm extends JFrame {
                 return;
             }
 
-            pstmt.setString(17, new String(passwordField.getPassword())); // password
+            pstmt.setString(17, new String(passwordField.getPassword())); 
             if (new String(passwordField.getPassword()).isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Password is required.");
                 passwordField.requestFocus();
