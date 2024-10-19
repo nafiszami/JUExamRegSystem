@@ -12,8 +12,8 @@ import java.awt.event.ActionListener;
 public class ExamRegistrationForm {
     private JFrame frame;
     private JTextField nameField, rollField, hallField, studentIdField, departmentField, batchField, mobileField;
-    private JTextField dayField, monthField, yearField;
-    private JButton submitButton, resetButton, viewButton, resetFileButton;
+    private JTextField dayField, monthField, yearField, searchField;
+    private JButton submitButton, resetButton, viewButton, searchButton;
 
     public static void main(String[] args) {
         ExamRegistrationForm form = new ExamRegistrationForm();
@@ -54,26 +54,30 @@ public class ExamRegistrationForm {
 
         // Create buttons
         submitButton = new JButton("Submit");
-        submitButton.setBounds(100, 370, 100, 30);
+        submitButton.setBounds(125, 370, 100, 30);
         frame.add(submitButton);
 
         resetButton = new JButton("Reset");
-        resetButton.setBounds(210, 370, 100, 30);
+        resetButton.setBounds(235, 370, 100, 30);
         frame.add(resetButton);
 
         viewButton = new JButton("View Registrations");
-        viewButton.setBounds(100, 410, 210, 30);
+        viewButton.setBounds(143, 410, 170, 30);
         frame.add(viewButton);
 
-        resetFileButton = new JButton("Reset File");
-        resetFileButton.setBounds(100, 450, 210, 30);
-        frame.add(resetFileButton);
+        searchField = new JTextField();
+        searchField.setBounds(30, 450, 150, 30);
+        frame.add(searchField);
+
+        searchButton = new JButton("Search");
+        searchButton.setBounds(200, 450, 100, 30);
+        frame.add(searchButton);
 
         // Add button actions
         submitButton.addActionListener(new SubmitAction());
         resetButton.addActionListener(new ResetAction());
         viewButton.addActionListener(new ViewAction());
-        resetFileButton.addActionListener(new ResetFileAction());
+        searchButton.addActionListener(new SearchAction());
 
         frame.setVisible(true);
     }
@@ -119,7 +123,7 @@ public class ExamRegistrationForm {
                 return;
             }
 
-            // Save data to file
+            // Save data
             Student student = new Student(name, rollNo, hallName, studentId, department, batch, mobileNumber, dob);
             DataStorage.saveStudent(student);
             JOptionPane.showMessageDialog(frame, "Registration Successful!");
@@ -129,7 +133,7 @@ public class ExamRegistrationForm {
         }
     }
 
-    // Reset action handle
+    // Reset action handler
     private class ResetAction implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -157,20 +161,25 @@ public class ExamRegistrationForm {
             textArea.setWrapStyleWord(true);
 
             JScrollPane scrollPane = new JScrollPane(textArea);
-            scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-            scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-            scrollPane.setPreferredSize(new java.awt.Dimension(400, 300));
-
+            scrollPane.setPreferredSize(new java.awt.Dimension(550, 200));
             JOptionPane.showMessageDialog(frame, scrollPane, "Registered Students", JOptionPane.INFORMATION_MESSAGE);
         }
     }
 
-    // Reset handle
-    private class ResetFileAction implements ActionListener {
+    // Search action handler
+    private class SearchAction implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            DataStorage.resetFile();
-            JOptionPane.showMessageDialog(frame, "All registrations have been cleared from the file.");
+            String query = searchField.getText();
+            String results = DataStorage.searchStudents(query);
+            JTextArea textArea = new JTextArea(results);
+            textArea.setEditable(false);
+            textArea.setLineWrap(true);
+            textArea.setWrapStyleWord(true);
+
+            JScrollPane scrollPane = new JScrollPane(textArea);
+            scrollPane.setPreferredSize(new java.awt.Dimension(550, 200));
+            JOptionPane.showMessageDialog(frame, scrollPane, "Search Results", JOptionPane.INFORMATION_MESSAGE);
         }
     }
 }
