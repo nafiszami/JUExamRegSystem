@@ -8,12 +8,18 @@ import dob.DateOfBirth;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 
 public class ExamRegistrationForm {
     private JFrame frame;
     private JTextField nameField, rollField, hallField, studentIdField, departmentField, batchField, mobileField;
-    private JTextField dayField, monthField, yearField, searchField;
-    private JButton submitButton, resetButton, viewButton, searchButton;
+    private JTextField dayField, monthField, yearField;
+    private JButton submitButton, resetButton, viewButton, resetFileButton;
+
+    private static final String FILE_NAME = "registered_students.txt";
 
     public static void main(String[] args) {
         ExamRegistrationForm form = new ExamRegistrationForm();
@@ -65,19 +71,15 @@ public class ExamRegistrationForm {
         viewButton.setBounds(143, 410, 170, 30);
         frame.add(viewButton);
 
-        searchField = new JTextField();
-        searchField.setBounds(30, 450, 150, 30);
-        frame.add(searchField);
-
-        searchButton = new JButton("Search");
-        searchButton.setBounds(200, 450, 100, 30);
-        frame.add(searchButton);
+        resetFileButton = new JButton("Reset File");
+        resetFileButton.setBounds(143, 450, 170, 30);
+        frame.add(resetFileButton);
 
         // Add button actions
         submitButton.addActionListener(new SubmitAction());
         resetButton.addActionListener(new ResetAction());
         viewButton.addActionListener(new ViewAction());
-        searchButton.addActionListener(new SearchAction());
+        resetFileButton.addActionListener(new ResetFileAction());
 
         frame.setVisible(true);
     }
@@ -126,10 +128,19 @@ public class ExamRegistrationForm {
             // Save data
             Student student = new Student(name, rollNo, hallName, studentId, department, batch, mobileNumber, dob);
             DataStorage.saveStudent(student);
+            saveToFile(student);
             JOptionPane.showMessageDialog(frame, "Registration Successful!");
 
             // Reset fields
             new ResetAction().actionPerformed(null);
+        }
+
+        private void saveToFile(Student student) {
+            try (PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(FILE_NAME, true)))) {
+                writer.println(student.toString());
+            } catch (IOException ex) {
+                JOptionPane.showMessageDialog(frame, "Error saving registration to file.", "File Error", JOptionPane.ERROR_MESSAGE);
+            }
         }
     }
 
@@ -154,32 +165,31 @@ public class ExamRegistrationForm {
     private class ViewAction implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            String registrations = DataStorage.viewRegistrations();
+            String registrations = DataStorage.viewRegistrationsFromFile(FILE_NAME);
             JTextArea textArea = new JTextArea(registrations);
             textArea.setEditable(false);
             textArea.setLineWrap(true);
             textArea.setWrapStyleWord(true);
 
             JScrollPane scrollPane = new JScrollPane(textArea);
-            scrollPane.setPreferredSize(new java.awt.Dimension(550, 200));
+            scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+            scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+            scrollPane.setPreferredSize(new java.awt.Dimension(400, 300));
+
             JOptionPane.showMessageDialog(frame, scrollPane, "Registered Students", JOptionPane.INFORMATION_MESSAGE);
         }
     }
 
-    // Search action handler
-    private class SearchAction implements ActionListener {
+    // Reset file action handler
+    private class ResetFileAction implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            String query = searchField.getText();
-            String results = DataStorage.searchStudents(query);
-            JTextArea textArea = new JTextArea(results);
-            textArea.setEditable(false);
-            textArea.setLineWrap(true);
-            textArea.setWrapStyleWord(true);
-
-            JScrollPane scrollPane = new JScrollPane(textArea);
-            scrollPane.setPreferredSize(new java.awt.Dimension(550, 200));
-            JOptionPane.showMessageDialog(frame, scrollPane, "Search Results", JOptionPane.INFORMATION_MESSAGE);
+            try (PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(FILE_NAME)))) {
+                writer.print("");
+                JOptionPane.showMessageDialog(frame, "Registered students file has been reset.");
+            } catch (IOException ex) {
+                JOptionPane.showMessageDialog(frame, "Error resetting the file.", "File Error", JOptionPane.ERROR_MESSAGE);
+            }
         }
     }
 }
