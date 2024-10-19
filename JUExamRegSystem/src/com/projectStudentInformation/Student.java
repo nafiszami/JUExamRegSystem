@@ -26,6 +26,7 @@ public class Student {
         this.batch = batch;
     }
 
+
     public String getName() { return name; }
     public String getFathersName() { return fathersName; }
     public String getMothersName() { return mothersName; }

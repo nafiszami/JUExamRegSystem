@@ -4,16 +4,16 @@ public class StudentInfoApp {
     public static void main(String[] args) {
         // Create a sample student object
         Student student = new Student(
-                "John Doe",
-                "Mr. Doe",
-                "Mrs. Doe",
+                "Anik Bose ",
+                "Mr. Bose",
+                "Mrs. Bose",
                 "01-01-2000",
                 "S12345",
-                "R67890",
-                "XYZ Hall",
-                "Computer Science",
-                "2020-2024",
-                "Batch 20"
+                "67890",
+                "MH Hall",
+                "Computer Science and Engineering ",
+                "2023-2024",
+                "Batch 53"
         );
 
         // Launch the StudentInfoFrame with the sample student

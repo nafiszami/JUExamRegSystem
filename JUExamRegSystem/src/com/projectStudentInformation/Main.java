@@ -17,6 +17,7 @@ public class Main {
         );
 
         // Display the student info in the StudentInfoFrame window
+
         new StudentInfoFrame(student);
     }
 }
