@@ -4,16 +4,16 @@ public class Main {
     public static void main(String[] args) {
         // Create a sample student object with test data
         Student student = new Student(
-                "John Doe",
-                "Mr. Doe",
-                "Mrs. Doe",
-                "01-01-2000",
+                "Jasim Khan",
+                "Mr. Khan",
+                "Mrs. Khan",
+                "01-01-2003",
                 "12345",
                 "54321",
-                "XYZ Hall",
-                "Computer Science",
-                "2023-2024",
-                "2018"
+                "SRJ Hall",
+                "CSE",
+                "2022-2022",
+                "52"
         );
 
         // Display the student info in the StudentInfoFrame window
