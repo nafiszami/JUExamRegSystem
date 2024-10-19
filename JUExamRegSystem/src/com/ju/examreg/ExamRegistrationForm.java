@@ -13,7 +13,7 @@ public class ExamRegistrationForm {
     private JFrame frame;
     private JTextField nameField, rollField, hallField, studentIdField, departmentField, batchField, mobileField;
     private JTextField dayField, monthField, yearField;
-    private JButton submitButton, resetButton, viewButton;
+    private JButton submitButton, resetButton, viewButton, resetFileButton;
 
     public static void main(String[] args) {
         ExamRegistrationForm form = new ExamRegistrationForm();
@@ -54,21 +54,26 @@ public class ExamRegistrationForm {
 
         // Create buttons
         submitButton = new JButton("Submit");
-        submitButton.setBounds(125, 370, 100, 30);
+        submitButton.setBounds(100, 370, 100, 30);
         frame.add(submitButton);
 
         resetButton = new JButton("Reset");
-        resetButton.setBounds(235, 370, 100, 30);
+        resetButton.setBounds(210, 370, 100, 30);
         frame.add(resetButton);
 
         viewButton = new JButton("View Registrations");
-        viewButton.setBounds(143, 410, 170, 30);
+        viewButton.setBounds(100, 410, 210, 30);
         frame.add(viewButton);
+
+        resetFileButton = new JButton("Reset File");
+        resetFileButton.setBounds(100, 450, 210, 30);
+        frame.add(resetFileButton);
 
         // Add button actions
         submitButton.addActionListener(new SubmitAction());
         resetButton.addActionListener(new ResetAction());
         viewButton.addActionListener(new ViewAction());
+        resetFileButton.addActionListener(new ResetFileAction());
 
         frame.setVisible(true);
     }
@@ -114,7 +119,7 @@ public class ExamRegistrationForm {
                 return;
             }
 
-            // Save data
+            // Save data to file
             Student student = new Student(name, rollNo, hallName, studentId, department, batch, mobileNumber, dob);
             DataStorage.saveStudent(student);
             JOptionPane.showMessageDialog(frame, "Registration Successful!");
@@ -124,7 +129,7 @@ public class ExamRegistrationForm {
         }
     }
 
-    // Reset action handler
+    // Reset action handle
     private class ResetAction implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -157,6 +162,15 @@ public class ExamRegistrationForm {
             scrollPane.setPreferredSize(new java.awt.Dimension(400, 300));
 
             JOptionPane.showMessageDialog(frame, scrollPane, "Registered Students", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+
+    // Reset handle
+    private class ResetFileAction implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            DataStorage.resetFile();
+            JOptionPane.showMessageDialog(frame, "All registrations have been cleared from the file.");
         }
     }
 }
