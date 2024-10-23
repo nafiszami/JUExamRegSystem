@@ -4,8 +4,8 @@ import storage.DataStorage;
 import storage.Student;
 import validation.InputValidator;
 import dob.DateOfBirth;
-
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedWriter;
@@ -16,9 +16,9 @@ import java.io.PrintWriter;
 public class ExamRegistrationForm {
     private JFrame frame;
     private JTextField nameField, rollField, hallField, studentIdField, departmentField, batchField, mobileField;
-    private JTextField dayField, monthField, yearField;
-    private JButton submitButton, resetButton, viewButton, resetFileButton;
-
+    private JTextField dayField, monthField, yearField, searchField;
+    private JButton submitButton, resetButton, viewButton, resetFileButton, searchButton;
+    private JPanel textPanel, buttonPanel, titlePanel;
     private static final String FILE_NAME = "registered_students.txt";
 
     public static void main(String[] args) {
@@ -28,74 +28,110 @@ public class ExamRegistrationForm {
 
     public void createForm() {
         frame = new JFrame("Exam Registration Form");
-        frame.setSize(600, 600);
+        frame.setSize(600, 700);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(null);
 
-        // Create form fields
-        nameField = createTextField("Name:", 30);
-        rollField = createTextField("Roll No:", 70);
-        hallField = createTextField("Hall Name:", 110);
-        studentIdField = createTextField("Student ID:", 150);
-        departmentField = createTextField("Department:", 190);
-        batchField = createTextField("Batch:", 230);
-        mobileField = createTextField("Mobile No:", 270);
+        // Center the frame on screen
+        frame.setLocationRelativeTo(null);
+
+        // Add the university logo and contact information at the top of the form
+        ImageIcon juLogoIcon = new ImageIcon("C:\\Users\\hp\\Downloads\\ju_logo.png");
+        Image juLogoImage = juLogoIcon.getImage().getScaledInstance(560, 140, Image.SCALE_SMOOTH);
+        JLabel juLogo = new JLabel(new ImageIcon(juLogoImage));
+        juLogo.setBounds(0, 10, 600, 90); // Adjust the bounds as needed
+        frame.add(juLogo);
+
+        // Create title box
+        titlePanel = new JPanel();
+        titlePanel.setBounds(90, 115, 400, 50);
+        titlePanel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 3));
+        titlePanel.setLayout(new BorderLayout());
+        frame.add(titlePanel);
+
+        JLabel titleLabel = new JLabel("JU Exam Registration Form");
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        titlePanel.add(titleLabel, BorderLayout.CENTER);
+
+        // Create form fields in a separate box
+        textPanel = new JPanel();
+        textPanel.setBounds(20, 175, 535, 310);
+        textPanel.setLayout(new GridLayout(8, 2, 20, 12));
+        textPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 3));
+        frame.add(textPanel);
+
+        nameField = createTextField("Name:");
+        rollField = createTextField("Roll No:");
+        hallField = createTextField("Hall Name:");
+        studentIdField = createTextField("Student ID:");
+        departmentField = createTextField("Department:");
+        batchField = createTextField("Batch:");
+        mobileField = createTextField("Mobile No:");
 
         // Date of Birth fields
         JLabel dobLabel = new JLabel("Date of Birth:");
-        dobLabel.setBounds(30, 310, 90, 25);
-        frame.add(dobLabel);
+        textPanel.add(dobLabel);
+        JPanel dobPanel = new JPanel(new FlowLayout());
+        dobPanel.add(dayField = new JTextField(2));
+        dobPanel.add(new JLabel("/"));
+        dobPanel.add(monthField = new JTextField(2));
+        dobPanel.add(new JLabel("/"));
+        dobPanel.add(yearField = new JTextField(4));
+        textPanel.add(dobPanel);
 
-        dayField = new JTextField();
-        dayField.setBounds(120, 310, 50, 25);
-        frame.add(dayField);
+        // Create button panel
+        buttonPanel = new JPanel();
+        buttonPanel.setBounds(50, 500, 500, 150);
+        buttonPanel.setLayout(new GridLayout(3, 2, 10, 10));
+        buttonPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
+        frame.add(buttonPanel);
 
-        monthField = new JTextField();
-        monthField.setBounds(180, 310, 50, 25);
-        frame.add(monthField);
-
-        yearField = new JTextField();
-        yearField.setBounds(240, 310, 70, 25);
-        frame.add(yearField);
-
-        // Create buttons
+        // Create buttons and add to panel
         submitButton = new JButton("Submit");
-        submitButton.setBounds(125, 370, 100, 30);
-        frame.add(submitButton);
-
         resetButton = new JButton("Reset");
-        resetButton.setBounds(235, 370, 100, 30);
-        frame.add(resetButton);
-
         viewButton = new JButton("View Registrations");
-        viewButton.setBounds(143, 410, 170, 30);
-        frame.add(viewButton);
-
         resetFileButton = new JButton("Reset File");
-        resetFileButton.setBounds(143, 450, 170, 30);
-        frame.add(resetFileButton);
+        searchField = new JTextField();
+        searchButton = new JButton("Search");
+
+        buttonPanel.add(submitButton);
+        buttonPanel.add(resetButton);
+        buttonPanel.add(viewButton);
+        buttonPanel.add(resetFileButton);
+        buttonPanel.add(searchField);
+        buttonPanel.add(searchButton);
 
         // Add button actions
         submitButton.addActionListener(new SubmitAction());
         resetButton.addActionListener(new ResetAction());
         viewButton.addActionListener(new ViewAction());
         resetFileButton.addActionListener(new ResetFileAction());
+        searchButton.addActionListener(new SearchAction());
 
         frame.setVisible(true);
     }
 
-    private JTextField createTextField(String label, int yPosition) {
+    private JTextField createTextField(String label) {
         JLabel jLabel = new JLabel(label);
-        jLabel.setBounds(30, yPosition, 90, 25);
-        frame.add(jLabel);
-
         JTextField jTextField = new JTextField();
-        jTextField.setBounds(120, yPosition, 150, 25);
-        frame.add(jTextField);
+        textPanel.add(jLabel);
+        textPanel.add(jTextField);
         return jTextField;
     }
 
-    // Submit action handler
+    // Other inner classes (SubmitAction, ResetAction, ViewAction, ResetFileAction, SearchAction) remain unchanged
+
+
+
+
+
+
+
+
+
+
+// Submit action handler
     private class SubmitAction implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -158,6 +194,7 @@ public class ExamRegistrationForm {
             dayField.setText("");
             monthField.setText("");
             yearField.setText("");
+            searchField.setText("");
         }
     }
 
@@ -190,6 +227,26 @@ public class ExamRegistrationForm {
             } catch (IOException ex) {
                 JOptionPane.showMessageDialog(frame, "Error resetting the file.", "File Error", JOptionPane.ERROR_MESSAGE);
             }
+        }
+    }
+
+    // Search action handler
+    private class SearchAction implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            String searchTerm = searchField.getText();
+            String result = DataStorage.searchRegistrations(searchTerm);
+            JTextArea textArea = new JTextArea(result);
+            textArea.setEditable(false);
+            textArea.setLineWrap(true);
+            textArea.setWrapStyleWord(true);
+
+            JScrollPane scrollPane = new JScrollPane(textArea);
+            scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+            scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+            scrollPane.setPreferredSize(new java.awt.Dimension(400, 300));
+
+            JOptionPane.showMessageDialog(frame, scrollPane, "Search Results", JOptionPane.INFORMATION_MESSAGE);
         }
     }
 }
