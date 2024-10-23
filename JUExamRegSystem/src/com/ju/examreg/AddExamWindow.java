@@ -4,6 +4,8 @@ import javax.swing.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.awt.*;
+
 
 public class AddExamWindow extends JFrame {
     private JTextField semesterField = new JTextField();

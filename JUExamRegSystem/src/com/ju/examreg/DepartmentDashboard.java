@@ -1,6 +1,7 @@
 package com.ju.examreg;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
@@ -15,8 +16,8 @@ public class DepartmentDashboard extends JFrame {
 
     // Components for the dashboard
     private JComboBox<String> examComboBox = new JComboBox<>();
-    private JList<String> studentList = new JList<>();
-    private JScrollPane studentScrollPane = new JScrollPane(studentList);
+    private JTable studentTable = new JTable();
+    private JScrollPane studentScrollPane = new JScrollPane(studentTable);
     private JButton viewStudentsButton = new JButton("View Students");
     private JButton logoutButton = new JButton("Logout");
 
@@ -29,7 +30,6 @@ public class DepartmentDashboard extends JFrame {
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
-
         JPanel buttonPanel = new JPanel();
         buttonPanel.add(new JLabel("Select Exam:"));
         buttonPanel.add(examComboBox);
@@ -39,9 +39,15 @@ public class DepartmentDashboard extends JFrame {
         add(buttonPanel, BorderLayout.NORTH);
         add(studentScrollPane, BorderLayout.CENTER);
 
+        // Set the student table model with non-editable behavior
+        studentTable.setModel(new DefaultTableModel(new Object[]{"ID", "Name", "Email", "Dept Approval", "Hall Approval", "Registrar Approval"}, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false; // Disable editing
+            }
+        });
 
         loadExams();
-
 
         viewStudentsButton.addActionListener(e -> loadStudents());
         logoutButton.addActionListener(e -> {
@@ -49,29 +55,12 @@ public class DepartmentDashboard extends JFrame {
             dispose();
         });
 
-
-        studentList.addMouseListener(new MouseAdapter() {
+        studentTable.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent evt) {
                 if (evt.getClickCount() == 2) {
-                    studentListClicked(evt);
+                    studentTableClicked(evt);
                 }
-            }
-        });
-
-      
-        studentList.setCellRenderer(new DefaultListCellRenderer() {
-            @Override
-            public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-                Component c = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-                if (isSelected) {
-                    c.setBackground(Color.BLUE);
-                    c.setForeground(Color.WHITE);
-                } else {
-                    c.setBackground(Color.WHITE);
-                    c.setForeground(Color.BLACK);
-                }
-                return c;
             }
         });
     }
@@ -97,8 +86,8 @@ public class DepartmentDashboard extends JFrame {
     }
 
     private void loadStudents() {
-        DefaultListModel<String> model = new DefaultListModel<>();
-        studentList.setModel(model); // Clear previous data
+        DefaultTableModel model = (DefaultTableModel) studentTable.getModel();
+        model.setRowCount(0); // Clear previous data
         String selectedExam = (String) examComboBox.getSelectedItem();
 
         if (selectedExam == null) {
@@ -121,27 +110,27 @@ public class DepartmentDashboard extends JFrame {
             ResultSet rs = pstmt.executeQuery();
 
             while (rs.next()) {
-                model.addElement(
-                        "ID: " + rs.getInt("student_id") +
-                                ", Name: " + rs.getString("student_name") +
-                                ", Email: " + rs.getString("email") +
-                                ", Dept Approval: " + rs.getString("department_approval") +
-                                ", Hall Approval: " + rs.getString("hall_approval") +
-                                ", Registrar Approval: " + rs.getString("registrar_approval")
-                );
+                model.addRow(new Object[]{
+                        rs.getInt("student_id"),
+                        rs.getString("student_name"),
+                        rs.getString("email"),
+                        rs.getString("department_approval"),
+                        rs.getString("hall_approval"),
+                        rs.getString("registrar_approval")
+                });
             }
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(this, "Error loading students: " + ex.getMessage());
         }
     }
 
-    private void studentListClicked(MouseEvent evt) {
-        String selectedValue = studentList.getSelectedValue();
-        if (selectedValue == null) {
+    private void studentTableClicked(MouseEvent evt) {
+        int row = studentTable.getSelectedRow();
+        if (row == -1) {
             return;
         }
 
-        String studentId = selectedValue.split(",")[0].split(":")[1].trim(); // Extract student_id
+        String studentId = studentTable.getValueAt(row, 0).toString(); // Get student_id
         showStudentDetails(studentId);
     }
 

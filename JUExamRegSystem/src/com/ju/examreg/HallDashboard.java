@@ -1,6 +1,7 @@
 package com.ju.examreg;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -14,8 +15,8 @@ public class HallDashboard extends JFrame {
 
     // Components for the dashboard
     private JComboBox<String> examComboBox = new JComboBox<>();
-    private JList<String> studentList = new JList<>();
-    private JScrollPane studentScrollPane = new JScrollPane(studentList);
+    private JTable studentTable = new JTable();
+    private JScrollPane studentScrollPane = new JScrollPane(studentTable);
     private JButton viewStudentsButton = new JButton("View Students");
     private JButton logoutButton = new JButton("Logout");
 
@@ -38,6 +39,9 @@ public class HallDashboard extends JFrame {
         add(controlPanel, BorderLayout.NORTH);
         add(studentScrollPane, BorderLayout.CENTER);
 
+        // Configure the student table
+        configureStudentTable();
+
         // Load exams into the combo box
         loadExams();
 
@@ -48,31 +52,27 @@ public class HallDashboard extends JFrame {
             dispose();
         });
 
-        // Double-click listener for student list
-        studentList.addMouseListener(new MouseAdapter() {
+        // Double-click listener for student table rows
+        studentTable.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent evt) {
                 if (evt.getClickCount() == 2) {
-                    studentListClicked();
+                    studentTableClicked();
                 }
             }
         });
+    }
 
-        // Custom rendering for blue background on selection
-        studentList.setCellRenderer(new DefaultListCellRenderer() {
+    private void configureStudentTable() {
+        // Create a table model with non-editable cells
+        DefaultTableModel model = new DefaultTableModel(new String[]{"ID", "Name", "Email", "Hall Approval"}, 0) {
             @Override
-            public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-                Component c = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-                if (isSelected) {
-                    c.setBackground(Color.BLUE);
-                    c.setForeground(Color.WHITE);
-                } else {
-                    c.setBackground(Color.WHITE);
-                    c.setForeground(Color.BLACK);
-                }
-                return c;
+            public boolean isCellEditable(int row, int column) {
+                return false; // Make the table non-editable
             }
-        });
+        };
+        studentTable.setModel(model);
+        studentTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION); // Only one row selected at a time
     }
 
     private void loadExams() {
@@ -98,8 +98,8 @@ public class HallDashboard extends JFrame {
     }
 
     private void loadStudents() {
-        DefaultListModel<String> model = new DefaultListModel<>();
-        studentList.setModel(model); // Clear previous data
+        DefaultTableModel model = (DefaultTableModel) studentTable.getModel();
+        model.setRowCount(0); // Clear previous data
 
         String selectedExam = (String) examComboBox.getSelectedItem();
         if (selectedExam == null) {
@@ -121,23 +121,23 @@ public class HallDashboard extends JFrame {
             ResultSet rs = pstmt.executeQuery();
 
             while (rs.next()) {
-                model.addElement(
-                        "ID: " + rs.getInt("student_id") +
-                                ", Name: " + rs.getString("student_name") +
-                                ", Email: " + rs.getString("email") +
-                                ", Hall Approval: " + rs.getString("hall_approval")
-                );
+                model.addRow(new Object[]{
+                        rs.getInt("student_id"),
+                        rs.getString("student_name"),
+                        rs.getString("email"),
+                        rs.getString("hall_approval")
+                });
             }
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(this, "Error loading students: " + ex.getMessage());
         }
     }
 
-    private void studentListClicked() {
-        String selectedValue = studentList.getSelectedValue();
-        if (selectedValue == null) return;
+    private void studentTableClicked() {
+        int selectedRow = studentTable.getSelectedRow();
+        if (selectedRow == -1) return;
 
-        String studentId = selectedValue.split(",")[0].split(":")[1].trim(); // Extract student_id
+        String studentId = studentTable.getValueAt(selectedRow, 0).toString(); // Get student ID
         showStudentDetails(studentId);
     }
 
