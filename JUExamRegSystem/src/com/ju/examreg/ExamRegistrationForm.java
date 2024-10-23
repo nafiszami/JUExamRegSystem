@@ -8,12 +8,18 @@ import dob.DateOfBirth;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 
 public class ExamRegistrationForm {
     private JFrame frame;
     private JTextField nameField, rollField, hallField, studentIdField, departmentField, batchField, mobileField;
     private JTextField dayField, monthField, yearField;
-    private JButton submitButton, resetButton, viewButton;
+    private JButton submitButton, resetButton, viewButton, resetFileButton;
+
+    private static final String FILE_NAME = "registered_students.txt";
 
     public static void main(String[] args) {
         ExamRegistrationForm form = new ExamRegistrationForm();
@@ -65,10 +71,15 @@ public class ExamRegistrationForm {
         viewButton.setBounds(143, 410, 170, 30);
         frame.add(viewButton);
 
+        resetFileButton = new JButton("Reset File");
+        resetFileButton.setBounds(143, 450, 170, 30);
+        frame.add(resetFileButton);
+
         // Add button actions
         submitButton.addActionListener(new SubmitAction());
         resetButton.addActionListener(new ResetAction());
         viewButton.addActionListener(new ViewAction());
+        resetFileButton.addActionListener(new ResetFileAction());
 
         frame.setVisible(true);
     }
@@ -117,10 +128,19 @@ public class ExamRegistrationForm {
             // Save data
             Student student = new Student(name, rollNo, hallName, studentId, department, batch, mobileNumber, dob);
             DataStorage.saveStudent(student);
+            saveToFile(student);
             JOptionPane.showMessageDialog(frame, "Registration Successful!");
 
             // Reset fields
             new ResetAction().actionPerformed(null);
+        }
+
+        private void saveToFile(Student student) {
+            try (PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(FILE_NAME, true)))) {
+                writer.println(student.toString());
+            } catch (IOException ex) {
+                JOptionPane.showMessageDialog(frame, "Error saving registration to file.", "File Error", JOptionPane.ERROR_MESSAGE);
+            }
         }
     }
 
@@ -145,7 +165,7 @@ public class ExamRegistrationForm {
     private class ViewAction implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            String registrations = DataStorage.viewRegistrations();
+            String registrations = DataStorage.viewRegistrationsFromFile(FILE_NAME);
             JTextArea textArea = new JTextArea(registrations);
             textArea.setEditable(false);
             textArea.setLineWrap(true);
@@ -157,6 +177,19 @@ public class ExamRegistrationForm {
             scrollPane.setPreferredSize(new java.awt.Dimension(400, 300));
 
             JOptionPane.showMessageDialog(frame, scrollPane, "Registered Students", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+
+    // Reset file action handler
+    private class ResetFileAction implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            try (PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(FILE_NAME)))) {
+                writer.print("");
+                JOptionPane.showMessageDialog(frame, "Registered students file has been reset.");
+            } catch (IOException ex) {
+                JOptionPane.showMessageDialog(frame, "Error resetting the file.", "File Error", JOptionPane.ERROR_MESSAGE);
+            }
         }
     }
 }

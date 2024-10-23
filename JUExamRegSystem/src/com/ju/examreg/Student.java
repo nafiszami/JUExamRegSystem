@@ -17,6 +17,39 @@ public class Student {
         this.dateOfBirth = dateOfBirth;
     }
 
+    // Getter methods
+    public String getName() {
+        return name;
+    }
+
+    public String getRollNo() {
+        return rollNo;
+    }
+
+    public String getHallName() {
+        return hallName;
+    }
+
+    public String getStudentId() {
+        return studentId;
+    }
+
+    public String getDepartment() {
+        return department;
+    }
+
+    public String getBatch() {
+        return batch;
+    }
+
+    public String getMobileNumber() {
+        return mobileNumber;
+    }
+
+    public DateOfBirth getDateOfBirth() {
+        return dateOfBirth;
+    }
+
     @Override
     public String toString() {
         return "Name: " + name + ", Roll No: " + rollNo + ", Hall: " + hallName + ", ID: " + studentId +

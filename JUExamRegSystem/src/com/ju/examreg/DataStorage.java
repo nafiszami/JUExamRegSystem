@@ -1,7 +1,8 @@
-
-
 package storage;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,5 +24,23 @@ public class DataStorage {
         }
         return registrations.toString();
     }
-}
 
+    // Method to view registrations from the file
+    public static String viewRegistrationsFromFile(String fileName) {
+        StringBuilder registrations = new StringBuilder();
+        try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                registrations.append(line).append("\n");
+            }
+        } catch (IOException e) {
+            return "Error reading the file.";
+        }
+
+        if (registrations.length() == 0) {
+            return "No registrations found.";
+        }
+
+        return registrations.toString();
+    }
+}
