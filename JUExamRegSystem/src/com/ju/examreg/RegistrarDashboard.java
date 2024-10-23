@@ -1,6 +1,7 @@
 package com.ju.examreg;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -10,7 +11,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class RegistrarDashboard extends JFrame {
-    private JList<String> studentList;
+    private JTable studentTable;
+    private DefaultTableModel tableModel;
     private JComboBox<String> examComboBox = new JComboBox<>();
     private JButton viewStudentsButton = new JButton("View Students");
     private JButton logoutButton = new JButton("Logout");
@@ -30,10 +32,19 @@ public class RegistrarDashboard extends JFrame {
         topPanel.add(logoutButton);
         add(topPanel, BorderLayout.NORTH);
 
-        // Student list setup
-        studentList = new JList<>();
-        JScrollPane studentScrollPane = new JScrollPane(studentList);
-        add(studentScrollPane, BorderLayout.CENTER);
+        // Initialize the table
+        String[] columnNames = {"Student ID", "Name", "Department", "Hall",
+                "Dept Approval", "Hall Approval", "Registrar Approval"};
+        tableModel = new DefaultTableModel(columnNames, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false; // Make all cells non-editable
+            }
+        };
+
+        studentTable = new JTable(tableModel);
+        JScrollPane tableScrollPane = new JScrollPane(studentTable);
+        add(tableScrollPane, BorderLayout.CENTER);
 
         // Load exams
         loadExams();
@@ -46,28 +57,12 @@ public class RegistrarDashboard extends JFrame {
         });
 
         // Double-click to show student details
-        studentList.addMouseListener(new MouseAdapter() {
+        studentTable.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent evt) {
                 if (evt.getClickCount() == 2) {
                     showStudentDetails();
                 }
-            }
-        });
-
-        // Custom renderer to highlight the selected student
-        studentList.setCellRenderer(new DefaultListCellRenderer() {
-            @Override
-            public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-                Component c = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-                if (isSelected) {
-                    c.setBackground(Color.BLUE);
-                    c.setForeground(Color.WHITE);
-                } else {
-                    c.setBackground(Color.WHITE);
-                    c.setForeground(Color.BLACK);
-                }
-                return c;
             }
         });
     }
@@ -93,8 +88,7 @@ public class RegistrarDashboard extends JFrame {
     }
 
     private void loadStudents() {
-        DefaultListModel<String> model = new DefaultListModel<>();
-        studentList.setModel(model); // Clear previous data
+        tableModel.setRowCount(0); // Clear previous data
 
         String selectedExam = (String) examComboBox.getSelectedItem();
         if (selectedExam == null) {
@@ -116,9 +110,7 @@ public class RegistrarDashboard extends JFrame {
             ResultSet rs = pstmt.executeQuery();
 
             while (rs.next()) {
-                String studentInfo = String.format(
-                        "ID: %d, Name: %s, Dept: %s, Hall: %s, " +
-                                "Dept Approval: %s, Hall Approval: %s, Registrar Approval: %s",
+                Object[] rowData = {
                         rs.getInt("student_id"),
                         rs.getString("student_name"),
                         rs.getString("department"),
@@ -126,8 +118,8 @@ public class RegistrarDashboard extends JFrame {
                         rs.getString("department_approval"),
                         rs.getString("hall_approval"),
                         rs.getString("registrar_approval")
-                );
-                model.addElement(studentInfo);
+                };
+                tableModel.addRow(rowData);
             }
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(this, "Error loading students: " + ex.getMessage());
@@ -135,10 +127,10 @@ public class RegistrarDashboard extends JFrame {
     }
 
     private void showStudentDetails() {
-        String selectedValue = studentList.getSelectedValue();
-        if (selectedValue == null) return;
+        int selectedRow = studentTable.getSelectedRow();
+        if (selectedRow == -1) return;
 
-        int studentId = Integer.parseInt(selectedValue.split(",")[0].split(":")[1].trim());
+        int studentId = (int) tableModel.getValueAt(selectedRow, 0);
         String sql = "SELECT * FROM students WHERE student_id = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();

@@ -11,7 +11,7 @@ public class StudentDashboard extends JFrame {
     private int studentId;
     private String department;
 
-    // Components for the UI
+
     private JComboBox<String> examComboBox = new JComboBox<>();
     private JButton registerButton = new JButton("Register for Exam");
     private JButton viewExamInfoButton = new JButton("View Exam Information");
@@ -26,10 +26,10 @@ public class StudentDashboard extends JFrame {
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
-        // Fetch student's department
+
         department = fetchDepartment();
 
-        // Panel for exam registration and exam information
+
         JPanel registerPanel = new JPanel(new GridLayout(3, 1, 10, 10));
         registerPanel.add(new JLabel("Select Exam:"));
         registerPanel.add(examComboBox);
@@ -181,6 +181,6 @@ public class StudentDashboard extends JFrame {
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new StudentDashboard(1).setVisible(true));  // Test with student ID 1
+        SwingUtilities.invokeLater(() -> new StudentDashboard(1).setVisible(true));
     }
 }
