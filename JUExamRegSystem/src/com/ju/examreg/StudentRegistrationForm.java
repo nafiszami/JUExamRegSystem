@@ -237,7 +237,7 @@ public class StudentRegistrationForm extends JFrame {
                 return;
             }
 
-            pstmt.setString(17, new String(passwordField.getPassword())); 
+            pstmt.setString(17, new String(passwordField.getPassword()));
             if (new String(passwordField.getPassword()).isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Password is required.");
                 passwordField.requestFocus();
